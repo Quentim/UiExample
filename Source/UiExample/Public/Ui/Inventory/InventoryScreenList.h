@@ -20,10 +20,16 @@ public:
 	void SetItems(TArray<FInventoryItemData> InInventoryItems);
 
 	UFUNCTION(BlueprintCallable)
-	void SelectItem(UInventoryScreenItem* InItem);
+	void SelectItem(const UInventoryScreenItem* InItem);
 
 	UFUNCTION(BlueprintCallable)
-	void SelectItemByData(FInventoryItemData Data);
+	void SelectItemById(int32 Id);
+
+	UFUNCTION(BlueprintPure)
+	int32 GetSelectedItemId() const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsItemSelected() const;
 
 protected:
 	
@@ -47,5 +53,5 @@ private:
 	TArray<UInventoryScreenItem*> ListItems;
 
 	UPROPERTY()
-	UInventoryScreenItem* SelectedListItem = nullptr;;
+	const UInventoryScreenItem* SelectedListItem = nullptr;;
 };

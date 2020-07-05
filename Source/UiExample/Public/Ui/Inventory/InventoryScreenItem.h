@@ -19,14 +19,14 @@ public:
 	void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
-	void SetInventoryItem(FInventoryItemData InData);
+	void SetInventoryItemData(FInventoryItemData InData);
 
-	UFUNCTION(BlueprintCallable)
-	FInventoryItemData GetSetInventoryItem() const;
+	UFUNCTION(BlueprintPure)
+	FInventoryItemData GetSetInventoryItemData() const;
 
 	void SetIsSelected(bool InIsSelected);
 	
-	FInventoryScreenItemDelegate OnClciked;
+	FInventoryScreenItemDelegate OnClicked;
 
 protected:
 

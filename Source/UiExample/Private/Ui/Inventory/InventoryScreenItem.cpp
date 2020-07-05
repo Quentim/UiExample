@@ -10,13 +10,13 @@
 	 Super::NativeConstruct();
  }
 
-void UInventoryScreenItem::SetInventoryItem(FInventoryItemData InData)
+void UInventoryScreenItem::SetInventoryItemData(FInventoryItemData InData)
 {
 	Data = InData;
 	ResetWidget();
 }
 
- FInventoryItemData UInventoryScreenItem::GetSetInventoryItem() const
+ FInventoryItemData UInventoryScreenItem::GetSetInventoryItemData() const
  {
 	 return Data;
  }
@@ -42,7 +42,7 @@ void UInventoryScreenItem::SetInventoryItem(FInventoryItemData InData)
 
  void UInventoryScreenItem::OnClickedHandler()
 {
-	OnClciked.Broadcast(this);
+	OnClicked.Broadcast(this);
 }
 
  void UInventoryScreenItem::OnHoveredHandler()
