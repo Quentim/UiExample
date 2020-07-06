@@ -8,52 +8,38 @@
 	 RefreshList();
  }
 
- void UInventoryScreenList::SelectItem(const UInventoryScreenItem* InItem)
+ void UInventoryScreenList::SelectItem(FInventoryItemData Data)
  {
-	 SelectedListItem = InItem;
+	 SeletedItemData = Data;
  	
 	 for (auto* Item : ListItems)
 	 {
-		 Item->SetIsSelected(Item == InItem);
+		 Item->SetIsSelected(Item->GetSetInventoryItemData() == Data);
 	 }
- }
-
- void UInventoryScreenList::SelectItemById(int32 Id)
- {
-	 SelectedListItem = nullptr;
- 	
-	 for (auto* Item : ListItems)
-	 {
-		 if(Item->GetSetInventoryItemData().Id == Id)
-		 {
-			 SelectedListItem = Item;
-			 Item->SetIsSelected(true);
-		 }
-
-		 Item->SetIsSelected(false);
-	 }
- }
+ } 
  
- int32 UInventoryScreenList::GetSelectedItemId() const
- {
- 	if(!IsValid(SelectedListItem))
- 	{
-		return -1;
- 	}
- 	
-	 return SelectedListItem->GetSetInventoryItemData().Id;
+ FInventoryItemData UInventoryScreenList::GetSelectedData() const
+ { 	
+	return SeletedItemData;
  }
 
  bool UInventoryScreenList::IsItemSelected() const
  {
-	 return IsValid(SelectedListItem);
+	 return SeletedItemData.Id > 0;
  }
 
  void UInventoryScreenList::RefreshList()
  {
 	 ListItems.Empty();
  	
-	 if(!IsValid(ListItemClass) || !IsValid(ItemsBox))
+	 if (!IsValid(ItemsBox))
+	 {
+		 return;
+	 }
+
+	 ItemsBox->ClearChildren();	
+ 	
+	 if(!IsValid(ListItemClass))
 	 {
 		 return;
 	 } 	
@@ -67,7 +53,7 @@
 	 		continue;
 	 	}
 
-		NewItem->OnClicked.AddLambda([=](UInventoryScreenItem* InventoryItem) {SelectItem(InventoryItem); });		 	 	
+		NewItem->OnClicked.AddLambda([=](FInventoryItemData Data) {SelectItem(Data); OnItemSelected.Broadcast(Data); });
 		NewItem->SetInventoryItemData(Item);
 		ListItems.Add(NewItem);
 		auto* NewItemSlot = ItemsBox->AddChildToWrapBox(NewItem);

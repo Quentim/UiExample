@@ -1,8 +1,30 @@
 #include "Ui/Inventory/InventoryScreen.h"
 
+
+#include "UI/Inventory/InventoryItemDetails.h"
 #include "Ui/Inventory/InventoryScreenList.h"
 #include "Ui/Inventory/InventoryScreenModel.h"
 #include "Ui/Inventory/InventoryScreenSortingPanel.h"
+
+void UInventoryScreen::NativeConstruct()
+{
+	if(!IsValid(InventoryList) || !IsValid(Details) || !IsValid(SortingPanel))
+	{
+		return;
+	}
+	
+	SortingPanel->SetSortingMethods({ESortingMethod::ByRarity, ESortingMethod::ByValue, ESortingMethod::ByName});
+	SortingPanel->SelectSortingMethods(DefaultSortingMethod);
+	SortingPanel->OnMethodSelected.AddLambda([this](ESortingMethod Method) { ResetList(); });
+
+	Details->Hide();
+
+	InventoryList->OnItemSelected.AddLambda([this](FInventoryItemData Data)
+	{
+		Details->SetInventoryItemData(Data);
+		Details->Show();
+	});
+} 
 
 void UInventoryScreen::InitWithModel(UInventoryScreenModel* InModel)
 {
@@ -12,26 +34,31 @@ void UInventoryScreen::InitWithModel(UInventoryScreenModel* InModel)
 	}
 	
 	Model = InModel;
-	Model->OnInventoryItemsChanged.AddLambda([this]() {ResetScreen();});	
+	Model->OnInventoryItemsChanged.AddLambda([this]() {ResetList();});
 }
 
-void UInventoryScreen::ResetScreen()
+void UInventoryScreen::ResetList()
 { 
-	if(!IsValid(Model) || !IsValid(InventoryList))
+	if(!IsValid(Model) || !IsValid(InventoryList) || !IsValid(Details))
 	{
 		return;
 	}
 
-	const int32 CurrentSelectedItemId = InventoryList->GetSelectedItemId();
+	Details->Hide();
+	
+	auto CurrentSelectedData = InventoryList->GetSelectedData();
 
 	auto NewInventoryItems(Model->GetInventoryItems());
 	SortInventoryItems(NewInventoryItems);	
 	InventoryList->SetItems(NewInventoryItems);
 
-	if (CurrentSelectedItemId > 0)
+	if (CurrentSelectedData.Id < 0)
 	{
-		InventoryList->SelectItemById(CurrentSelectedItemId);
-	}	
+		return;		 
+	}
+	
+	InventoryList->SelectItem(CurrentSelectedData);
+	Details->Show();
 }
 
 void UInventoryScreen::SortInventoryItems(TArray<FInventoryItemData>& InventoryItems)
@@ -41,18 +68,18 @@ void UInventoryScreen::SortInventoryItems(TArray<FInventoryItemData>& InventoryI
 		return;
 	}
 	
-	switch (SortingPanel->GetSortingMethod())
+	switch (SortingPanel->GetSelectedSortingMethod())
 	{
 		case ESortingMethod::ByName:
 		InventoryItems.Sort([](FInventoryItemData A, FInventoryItemData B) {return A.Name.ToString() <= B.Name.ToString(); });
 		break;
 
 		case ESortingMethod::ByRarity:
-		InventoryItems.Sort([](FInventoryItemData A, FInventoryItemData B) {return int(A.Rarity) <= int(B.Rarity); });
+		InventoryItems.Sort([](FInventoryItemData A, FInventoryItemData B) {return int(A.Rarity) >= int(B.Rarity); });
 		break;
 
 		case ESortingMethod::ByValue:
-		InventoryItems.Sort([](FInventoryItemData A, FInventoryItemData B) {return A.Value <= B.Value; });
+		InventoryItems.Sort([](FInventoryItemData A, FInventoryItemData B) {return A.Value >= B.Value; });
 		break;
 
 		default:

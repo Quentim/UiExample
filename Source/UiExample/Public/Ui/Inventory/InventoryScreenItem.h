@@ -10,28 +10,35 @@ class UButton;
 UCLASS()
 class UIEXAMPLE_API UInventoryScreenItem : public UUserWidget
 {
-	DECLARE_MULTICAST_DELEGATE_OneParam(FInventoryScreenItemDelegate, UInventoryScreenItem*);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FInventoryItemDataDelegate, FInventoryItemData);
 		
 	GENERATED_BODY()
 
 public:
 
-	void NativeConstruct() override;
+	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
 	void SetInventoryItemData(FInventoryItemData InData);
-
 	UFUNCTION(BlueprintPure)
 	FInventoryItemData GetSetInventoryItemData() const;
 
+	UFUNCTION(BlueprintCallable)
 	void SetIsSelected(bool InIsSelected);
 	
-	FInventoryScreenItemDelegate OnClicked;
+	FInventoryItemDataDelegate OnClicked;
 
 protected:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void ResetWidget();	
+	void ResetWidget();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetSelectedStyle();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetRegularStyle();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetHoveredStyle();
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
 	FInventoryItemData Data;
@@ -42,17 +49,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (Bindwidget))
 	UButton* MainButton = nullptr;
 
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetSelectedStyle();
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetRegularStyle();
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetHoveredStyle();
-
 private:
-	
+
+	UFUNCTION()
 	void OnClickedHandler();
+	UFUNCTION()
 	void OnHoveredHandler();
+	UFUNCTION()
 	void OnUnhoveredHandler();
 };

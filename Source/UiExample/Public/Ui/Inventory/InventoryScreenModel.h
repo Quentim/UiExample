@@ -4,11 +4,9 @@
 #include "Game/InventoryItemData.h"
 #include "UObject/NoExportTypes.h"
 #include "InventoryScreenModel.generated.h"
+ 
 
-
-DECLARE_MULTICAST_DELEGATE(FInventoryScreenModelDelegate);
-
-UCLASS()
+UCLASS(BlueprintType, Blueprintable, Abstract)
 class UIEXAMPLE_API UInventoryScreenModel : public UObject
 {
 	GENERATED_BODY()
@@ -19,6 +17,6 @@ public:
 	UFUNCTION(BlueprintPure, BlueprintNativeEvent)
 	TArray<FInventoryItemData> GetInventoryItems();
 
-	FInventoryScreenModelDelegate OnInventoryItemsChanged;	
+	FSimpleMulticastDelegate OnInventoryItemsChanged;	
 	
 };

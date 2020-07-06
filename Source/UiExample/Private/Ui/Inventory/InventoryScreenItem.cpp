@@ -42,7 +42,7 @@ void UInventoryScreenItem::SetInventoryItemData(FInventoryItemData InData)
 
  void UInventoryScreenItem::OnClickedHandler()
 {
-	OnClicked.Broadcast(this);
+	OnClicked.Broadcast(Data);
 }
 
  void UInventoryScreenItem::OnHoveredHandler()
@@ -64,5 +64,5 @@ void UInventoryScreenItem::SetInventoryItemData(FInventoryItemData InData)
 		 return;
 	 }
 
-	 SetHoveredStyle();
+	 SetRegularStyle();
  } 

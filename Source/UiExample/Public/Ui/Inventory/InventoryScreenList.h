@@ -9,9 +9,13 @@ class UInventoryScreenItem;
 class UWrapBox;
 class UWrapBoxSlot;
 
+
+
 UCLASS()
 class UIEXAMPLE_API UInventoryScreenList : public UUserWidget
 {
+	DECLARE_MULTICAST_DELEGATE_OneParam(FInventoryDataDelegate, FInventoryItemData);
+	
 	GENERATED_BODY()
 
 public:
@@ -20,16 +24,15 @@ public:
 	void SetItems(TArray<FInventoryItemData> InInventoryItems);
 
 	UFUNCTION(BlueprintCallable)
-	void SelectItem(const UInventoryScreenItem* InItem);
-
-	UFUNCTION(BlueprintCallable)
-	void SelectItemById(int32 Id);
+	void SelectItem(FInventoryItemData InItem); 
 
 	UFUNCTION(BlueprintPure)
-	int32 GetSelectedItemId() const;
+	FInventoryItemData GetSelectedData() const;
 
 	UFUNCTION(BlueprintPure)
 	bool IsItemSelected() const;
+
+	FInventoryDataDelegate OnItemSelected;
 
 protected:
 	
@@ -53,5 +56,5 @@ private:
 	TArray<UInventoryScreenItem*> ListItems;
 
 	UPROPERTY()
-	const UInventoryScreenItem* SelectedListItem = nullptr;;
+	FInventoryItemData SeletedItemData;
 };

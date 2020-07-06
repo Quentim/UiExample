@@ -20,7 +20,7 @@ struct UIEXAMPLE_API FInventoryItemData
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Id = 0;
+	int32 Id = -1;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Name;
